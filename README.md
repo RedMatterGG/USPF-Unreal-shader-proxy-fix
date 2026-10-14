@@ -1,5 +1,7 @@
 # USPF — Unreal shader proxy fix
 
+Important note: Some functionalities explained here for the app and not fully implemented but the proxy dll is fully complete and functional.
+
 USPF removes shader-compilation stutter in DirectX 12 Unreal Engine games.
 
 When a DX12 Unreal game meets a material it hasn't compiled yet, it compiles the pipeline
