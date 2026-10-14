@@ -2,7 +2,10 @@
 
 Important notes: 
 Some functionalities explained here for the app and not fully implemented but the proxy dll is fully complete and functional.
+
 The startup precompile step is a bit broken atm,if you do experience initial main menu items missing,change this StartupCompileNormally to on and save.This may make the dll sometimes not properly detect when its done compiling normally or not, its left disabled until i implement a better way of handling it.( This step does not matter if you use the tool after the shader precomp has already been done or you can just simply restart the game to fix the menu being broken)
+
+Its very likely this also works in other game engines or at least some parts of it but i have not tested it.
 
 USPF removes shader-compilation stutter in DirectX 12 Unreal Engine games.
 
