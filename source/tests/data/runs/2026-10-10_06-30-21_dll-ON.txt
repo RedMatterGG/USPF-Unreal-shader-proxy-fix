@@ -1,0 +1,17 @@
+run       2026-10-10_06-30-21   dll-ON
+game      F:\Games\Borderlands 4\OakGame\Binaries\Win64\Borderlands4.exe
+settings  BudgetMs=1 Workers=2 WorkerCpus=upper-half AsyncThreads=all StartupCompileNormally=1 StartupQuietSeconds=10 StartupCpuBusyPercent=80 StartupFpsCap=30 StartupBoostCompileThreads=1 UiPipelinesCompileNormally=1
+          ComputePipelineMode=skip MaxQueuedCompiles=256 QueueFullMode=placeholder MaxPlaceholders=512 WorkerEfficiencyMode=1 MaxCompilesPerSecond=0
+length    logged until 1053 s after launch; first frame at 11.1 s
+startup   precompile finished 256.1 s after launch, 57991 pipeline creates/loads; frame stats not recorded during it
+frames: gameplay         787.4 s     86248 frames  avg  110.3 fps ( 9.07 ms)  1% low   72.7 fps  0.1% low   52.5 fps  worst    99.4 ms  >50ms 3  >100ms 0  >250ms 0
+hitches   3 gameplay frames >= 50 ms: 0 pipeline compile, 0 forced wait, 0 several pipeline calls, 3 with no pipeline compile (streaming / CPU / GPU)
+            worst #1: 99 ms at 449.6 s - no pipeline compile this frame (streaming / CPU / GPU)
+            worst #2: 73 ms at 452.7 s - no pipeline compile this frame (streaming / CPU / GPU)
+            worst #3: 59 ms at 1031.3 s - no pipeline compile this frame (streaming / CPU / GPU)
+game-thread time in pipeline calls during gameplay, by cause: background compile, waited BudgetMs 0.6 s, pipeline-cache load 0.2 s, a draw or dispatch waited for its pipeline's background compile 0.5 s
+pipelines 32360 graphics created, 19 compute created, 34934 library loads, 3100.0 s inside those calls
+EXPERIMENTAL ComputePipelineMode=skip: 0 compute dispatches skipped
+UI        201 draws waited for a UI pipeline (198 cut short by UiWaitMaxMs=2 and skipped)
+queue     longest compile queue in gameplay 139; 0 placeholders past MaxQueuedCompiles (QueueFullMode=placeholder, MaxPlaceholders=512); workers waited 0.0 s for MaxCompilesPerSecond
+PSOs      32360 created, 4026 compiled in background, 10027 draws skipped, 0 forced waits, 0 failed

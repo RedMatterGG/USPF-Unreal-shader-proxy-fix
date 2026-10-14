@@ -1,0 +1,4 @@
+time_s,frame_ms,cause,detail,longest_call_ms,longest_call_thread,pipeline_calls,ms_in_pipeline_calls,new_placeholders,draws_skipped,forced_waits,compile_queue
+449.62,99.4,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+452.66,73.0,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+1031.26,59.0,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0

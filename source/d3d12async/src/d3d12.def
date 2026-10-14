@@ -1,0 +1,43 @@
+LIBRARY d3d12
+EXPORTS
+    stub_Ordinal99                                                          @99 NONAME
+    SetAppCompatStringPointer = stub_SetAppCompatStringPointer              @100
+    D3D12CreateDevice = Proxy_D3D12CreateDevice                             @101
+    D3D12GetDebugInterface = stub_D3D12GetDebugInterface                    @102
+    D3D12CoreCreateLayeredDevice = stub_D3D12CoreCreateLayeredDevice        @103
+    D3D12CoreGetLayeredDeviceSize = stub_D3D12CoreGetLayeredDeviceSize      @104
+    D3D12CoreRegisterLayers = stub_D3D12CoreRegisterLayers                  @105
+    D3D12CreateRootSignatureDeserializer = stub_D3D12CreateRootSignatureDeserializer @106
+    D3D12CreateVersionedRootSignatureDeserializer = stub_D3D12CreateVersionedRootSignatureDeserializer @107
+    D3D12DeviceRemovedExtendedData = d3a_dred_placeholder @108 DATA
+    D3D12EnableExperimentalFeatures = stub_D3D12EnableExperimentalFeatures  @109
+    D3D12GetInterface = Proxy_D3D12GetInterface                             @110
+    D3D12PIXEventsReplaceBlock = stub_D3D12PIXEventsReplaceBlock            @111
+    D3D12PIXGetThreadInfo = stub_D3D12PIXGetThreadInfo                      @112
+    D3D12PIXNotifyWakeFromFenceSignal = stub_D3D12PIXNotifyWakeFromFenceSignal @113
+    D3D12PIXReportCounter = stub_D3D12PIXReportCounter                      @114
+    D3D12SerializeRootSignature = stub_D3D12SerializeRootSignature          @115
+    D3D12SerializeVersionedRootSignature = stub_D3D12SerializeVersionedRootSignature @116
+    GetBehaviorValue = stub_GetBehaviorValue                                @117
+    D3D12Async_PlaceholderState
+    D3D12Async_Configure
+    D3D12Async_GetStats
+    D3D12Async_TestHookLibrary
+    D3D12Async_TestPhase
+    D3D12Async_StartupActive
+    D3D12Async_TestStartup
+    D3D12Async_PresentCount
+    D3D12Async_GetActivity
+    D3D12Async_TestCpu
+    D3D12Async_TestCpuNoReset
+    D3D12Async_LastHitch
+    D3D12Async_TestUiMode
+    D3D12Async_TestComputeMode
+    D3D12Async_TestQueueMode
+    D3D12Async_TestMinSeconds
+    D3D12Async_TestUiWait
+    D3D12Async_QueueFullPlaceholder
+    D3D12Async_TestMaxPlaceholders
+    D3D12Async_TestLoading
+    D3D12Async_TestFlood
+    D3D12Async_TestFirstFrame

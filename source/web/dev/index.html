@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USPF</title>
+<link rel="stylesheet" href="../uPlot.min.css">
+<link rel="stylesheet" href="../app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="nav" aria-label="Sections">
+    <button class="nav-item active" data-tab="dashboard" title="Dashboard">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-tab="performance" title="Performance">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      <span>Performance</span>
+    </button>
+    <button class="nav-item" data-tab="settings" title="Settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      <span>Settings</span>
+    </button>
+    <div class="nav-spacer"></div>
+    <button class="nav-item" data-tab="about" title="About">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+      <span>About</span>
+    </button>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="brand"><img src="../logo.svg" alt=""><b>USPF</b><span>Unreal shader proxy fix</span></div>
+      <div class="game-picker" id="gamePicker">
+        <button class="picker-button" id="pickerButton" aria-haspopup="listbox" aria-expanded="false">
+          <span class="picker-icon" id="pickerIcon"></span>
+          <span class="picker-text"><span id="pickerName">No game selected</span><small id="pickerSub"></small></span>
+          <svg class="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="picker-menu" id="pickerMenu" role="listbox" hidden>
+          <input class="picker-search" id="pickerSearch" placeholder="Search games" autocomplete="off">
+          <div class="picker-list" id="pickerList"></div>
+          <div class="picker-actions">
+            <button class="btn ghost small" id="addGame">+ Add game</button>
+            <button class="btn ghost small" id="gameFolders">Game folders…</button>
+            <button class="btn ghost small" id="rescan">Rescan</button>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-right" id="topStatus"></div>
+    </header>
+
+    <main class="content">
+      <!-- DASHBOARD -->
+      <section class="tab active" id="tab-dashboard">
+        <div class="empty" id="dashEmpty" hidden>
+          <h2>No Unreal games found</h2>
+          <p>USPF looks through your Steam, Epic Games and GOG libraries. Add a game by its .exe if it isn't listed.</p>
+          <button class="btn primary" data-action="addGame">+ Add game</button>
+        </div>
+        <div id="dashBody">
+          <div class="hero card" id="hero">
+            <div class="hero-art" id="heroArt"></div>
+            <div class="hero-text">
+              <h1 id="heroName">—</h1>
+              <div class="hero-meta"><span id="heroSource"></span><span class="pill" id="heroPill"></span></div>
+              <div class="hero-path" id="heroPath"></div>
+            </div>
+          </div>
+          <div class="alerts" id="alerts"></div>
+          <div class="tiles" id="dashTiles"></div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Layer</h3><span class="muted small" id="layerNote"></span></div>
+              <div class="rows" id="layerRows"></div>
+              <div class="actions" id="layerActions"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Shader caches</h3><button class="btn ghost small" id="cacheRefresh">Refresh</button></div>
+              <div class="rows" id="cacheRows"><div class="muted">Loading…</div></div>
+              <div class="actions">
+                <button class="btn" id="clearGameCache">Clear this game's caches</button>
+                <button class="btn danger-ghost" id="clearDriverCache">Clear GPU driver caches</button>
+              </div>
+              <p class="muted small">Driver caches are shared by every game: each one compiles its shaders again on its next start. Saves and settings are never touched.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Folders</h3></div>
+            <div class="folders" id="folders"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PERFORMANCE -->
+      <section class="tab" id="tab-performance">
+        <div class="toolbar">
+          <label class="field-inline">Run
+            <select id="runSelect"></select>
+          </label>
+          <span class="pill" id="runPill"></span>
+          <span class="muted small" id="runMeta"></span>
+          <div class="toolbar-spacer"></div>
+          <button class="btn ghost small" id="runsRefresh">Refresh</button>
+        </div>
+        <div class="empty" id="perfEmpty" hidden>
+          <h2>No runs yet</h2>
+          <p>Install the layer and play the game: every session writes a run log that shows up here.</p>
+        </div>
+        <div id="perfBody">
+          <div class="tiles" id="perfTiles"></div>
+          <div class="card chart-card">
+            <div class="card-head"><h3>Frame rate</h3></div>
+            <div class="chart" id="fpsChart"></div>
+          </div>
+          <div class="card chart-card">
+            <div class="card-head"><h3>Frame time</h3><span class="muted small" id="ftNote"></span></div>
+            <div class="chart" id="ftChart"></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Hitches</h3><span class="muted small" id="hitchNote"></span></div>
+              <div class="table-wrap"><table class="table" id="hitchTable"></table></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Run summary</h3></div>
+              <pre class="summary" id="runText"></pre>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <div class="card-head"><h3>All runs of this game</h3><span class="muted small">Average and lows per run, oldest to newest.</span></div>
+            <div class="chart short" id="trendChart"></div>
+            <div class="table-wrap"><table class="table" id="runsTable"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="tab" id="tab-settings">
+        <div class="toolbar">
+          <div class="segmented" id="settingsMode">
+            <button data-mode="basic" class="active">Basic</button>
+            <button data-mode="advanced">Advanced</button>
+          </div>
+          <span class="muted small" id="iniPath"></span>
+          <div class="toolbar-spacer"></div>
+          <button class="btn ghost" id="iniOpen">Open folder</button>
+          <button class="btn ghost" id="iniReset">Reset to defaults</button>
+          <button class="btn primary" id="iniSave" disabled>Save</button>
+        </div>
+        <div class="empty" id="settingsEmpty" hidden>
+          <h2>Install the layer first</h2>
+          <p>Settings live in d3d12async.ini next to the game's executable. It's created when you install.</p>
+        </div>
+        <div class="settings-grid" id="settingsGrid"></div>
+        <p class="muted small settings-foot">Changes apply the next time the game starts. Hover the ? for what each option does.</p>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="tab" id="tab-about">
+        <div class="card about">
+          <div class="about-brand">
+            <img src="../logo.svg" alt="">
+            <div><h1>USPF</h1><div class="accent">Unreal shader proxy fix</div></div>
+          </div>
+          <div class="about-text">
+            <div class="version" id="aboutVersion"></div>
+            <p>Removes shader-compilation stutter in DirectX 12 Unreal Engine games. A d3d12.dll layer compiles new pipelines in the background and skips the draws that need them until they're ready, instead of freezing the game.</p>
+          </div>
+          <div class="about-actions">
+            <button class="btn primary" id="checkUpdate">Check for updates</button>
+            <button class="btn ghost" id="githubLink" disabled title="The repository isn't public yet">GitHub (coming soon)</button>
+          </div>
+        </div>
+        <div class="card" id="updateCard" hidden>
+          <div class="card-head"><h3>Updates</h3></div>
+          <div id="updateBody"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Notes</h3></div>
+          <ul class="notes">
+            <li>Single-player and offline use only. A replaced d3d12.dll can be flagged by anti-cheat; USPF refuses games that ship one unless you confirm.</li>
+            <li>Nothing is installed system-wide. USPF writes d3d12.dll and d3d12async.ini next to the game's executable, and an optional marked block in the game's Engine.ini.</li>
+            <li>Run logs are copied to %LOCALAPPDATA%\USPF\runs so their history survives the game folder keeping only the latest run.</li>
+          </ul>
+          <p class="muted small">© 2026 Meower · MIT License · Charts by uPlot (MIT) · Microsoft Edge WebView2</p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="modal-back" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+    <div class="actions right" id="modalActions"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="tip" id="tip" hidden></div>
+
+<script src="mockdata.js"></script><script src="mock.js"></script><script src="../uPlot.iife.min.js"></script>
+<script src="../app.js"></script>
+</body>
+</html>

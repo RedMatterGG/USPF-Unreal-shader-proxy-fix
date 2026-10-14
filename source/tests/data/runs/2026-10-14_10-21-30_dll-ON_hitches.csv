@@ -1,0 +1,32 @@
+time_s,frame_ms,cause,detail,longest_call_ms,longest_call_thread,pipeline_calls,ms_in_pipeline_calls,new_placeholders,draws_skipped,forced_waits,compile_queue
+207.85,100.6,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+207.95,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.05,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.15,100.4,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.25,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.35,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.45,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.55,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.66,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.76,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.86,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+208.96,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+209.06,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+211.87,100.8,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+211.97,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+212.07,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+212.17,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+212.32,150.4,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+212.62,300.6,forced-wait,"forced wait for a background compile: 298 ms on a command-recording thread",297.7,command-recording,1,297.7,0,0,1,0
+322.23,100.5,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.33,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.43,100.4,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.53,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.63,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.73,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.83,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+322.93,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+323.03,100.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+323.13,100.2,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.0,,0,0.0,0,0,0,0
+323.44,304.1,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.1,command-recording,1,0.1,1,0,0,0
+329.19,304.3,not-pipeline,"no pipeline compile this frame (streaming / CPU / GPU)",0.1,command-recording,1,0.1,1,0,0,0

@@ -1,0 +1,20 @@
+run       2026-10-14_10-21-30   dll-ON
+game      Z:\home\claude\d3d12async\build\pso_test.exe
+settings  BudgetMs=0 Workers=2 WorkerCpus=upper-half AsyncThreads=all StartupCompileNormally=0 StartupQuietSeconds=1 StartupCpuBusyPercent=0 StartupFpsCap=20 StartupBoostCompileThreads=1 UiPipelinesCompileNormally=0
+          ComputePipelineMode=sync MaxQueuedCompiles=100000 QueueFullMode=compile MaxPlaceholders=512 WorkerEfficiencyMode=1 MaxCompilesPerSecond=0
+length    logged until 350 s after launch; first frame at 207.1 s
+startup   precompile finished 321.1 s after launch, 0 pipeline creates/loads; frame stats not recorded during it
+frames: gameplay         136.3 s        32 frames  avg    8.5 fps (117.77 ms)  1% low    3.3 fps  0.1% low    3.3 fps  worst   304.3 ms  >50ms 31  >100ms 31  >250ms 3
+fps       max 10.0 fps (best one-second average, at 209 s); fastest single frame 1.14 ms
+hitches   31 gameplay frames >= 50 ms: 0 pipeline compile, 1 forced wait, 0 several pipeline calls, 30 with no pipeline compile (streaming / CPU / GPU)
+            compile hitches from: forced wait for a background compile: 1
+            worst #1: 304 ms at 329.2 s - no pipeline compile this frame (streaming / CPU / GPU)
+            worst #2: 304 ms at 323.4 s - no pipeline compile this frame (streaming / CPU / GPU)
+            worst #3: 301 ms at 212.6 s - forced wait for a background compile: 298 ms on a command-recording thread
+            worst #4: 150 ms at 212.3 s - no pipeline compile this frame (streaming / CPU / GPU)
+            worst #5: 101 ms at 211.9 s - no pipeline compile this frame (streaming / CPU / GPU)
+game-thread time in pipeline calls during gameplay, by cause: background compile, waited BudgetMs 0.1 s, forced wait for a background compile 0.3 s
+pipelines 235 graphics created, 0 compute created, 1 library loads, 0.1 s inside those calls
+UI        3 draws waited for a UI pipeline (1 cut short by UiWaitMaxMs=0 and skipped)
+queue     longest compile queue in gameplay 8; 2 placeholders past MaxQueuedCompiles (QueueFullMode=placeholder, MaxPlaceholders=512); workers waited 2.0 s for MaxCompilesPerSecond
+PSOs      235 created, 181 compiled in background, 61 draws skipped, 5 forced waits, 3 failed
