@@ -292,8 +292,9 @@ void Writer() {
         double end = StartupEndedAt();
         if (end >= 0)
             fprintf(f, "startup   precompile finished %.1f s after launch, %llu pipeline creates/loads; "
-                       "frame stats not recorded during it\r\n",
-                    end, (unsigned long long)StartupPsos());
+                       "frame stats not recorded during it%s\r\n",
+                    end, (unsigned long long)StartupPsos(),
+                    StartupWarm() ? " (warm launch: the driver cache already had this game's pipelines)" : "");
         else
             fprintf(f, "startup   precompile still running (%llu pipeline creates/loads so far); frame stats start after it\r\n",
                     (unsigned long long)StartupPsos());

@@ -791,7 +791,7 @@ $('#checkUpdate').onclick = async () => {
     } else if (r.status === 'current') {
       body.innerHTML = `<p>You have the latest version (${esc(r.current)}).</p>`;
     } else if (r.status === 'none') {
-      body.innerHTML = '<p>No releases have been published yet. The GitHub page is coming soon.</p>';
+      body.innerHTML = '<p>No releases have been published yet.</p>';
     } else {
       body.innerHTML = `<p>Couldn't check for updates: ${esc(r.error || 'unknown error')}</p>`;
     }
@@ -810,6 +810,7 @@ $('#checkUpdate').onclick = async () => {
   state.elevated = r.elevated;
   state.games = r.games;
   $('#aboutVersion').textContent = `Version ${state.version}`;
+  if (r.github) $('#githubLink').onclick = () => call('openUrl', { url: r.github });
   if (state.elevated) $('#topStatus').innerHTML = '<span class="pill update" title="USPF is running with administrator rights">Administrator</span>';
   if (!currentGame()) state.gameId = state.games[0]?.id || null;
   renderPicker();

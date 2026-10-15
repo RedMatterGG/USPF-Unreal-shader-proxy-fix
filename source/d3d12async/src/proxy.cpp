@@ -135,6 +135,7 @@ extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestPhase(int startupSyn
     g_cfg.startupCpuBusy = 0;  // test machines' CPU load is not the game's
     g_cfg.startupFloodSeconds = 0;
     g_cfg.startupMinSeconds = 0;
+    g_cfg.startupWarmLaunch = false;  // [17b] tests it on its own
     StartupResetForTest();
 }
 extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestMinSeconds(int seconds) {
@@ -147,6 +148,11 @@ extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestFlood(int floodSecon
     StartupResetForTest();
 }
 extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestFirstFrame() { StartupFirstFrame(); }
+// Test aid: warm-launch rule on/off and the slow-compile threshold. Returns 1 if the last phase ended as warm.
+extern "C" __declspec(dllexport) int WINAPI D3D12Async_TestWarm(int on, double slowMs) {
+    if (on >= 0) { g_cfg.startupWarmLaunch = on != 0; g_cfg.startupSlowMs = slowMs; StartupResetForTest(); }
+    return StartupWarm() ? 1 : 0;
+}
 extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestCpuNoReset(int busyPercent) { g_cfg.startupCpuBusy = busyPercent; }
 extern "C" __declspec(dllexport) void WINAPI D3D12Async_TestCpu(int busyPercent) {
     g_cfg.startupCpuBusy = busyPercent;

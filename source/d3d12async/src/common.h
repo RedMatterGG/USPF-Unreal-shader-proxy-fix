@@ -41,16 +41,18 @@ struct Config {
     bool overlayStats = true;     // ...with live counters
     bool overlayFollowFocus = false; // hide it while the game isn't the foreground window
     int overlayOpacity = 200;     // 0..255
-    bool startupSync = false;     // compile normally during the game's startup precompile flood
+    bool startupSync = true;      // compile normally during the game's startup precompile flood
     int startupMinPsos = 64;      // ...which counts as over after at least this many PSOs
     int startupQuietSeconds = 10;  // ...followed by this many seconds
     int startupQuietRate = 10;    // ...with at most this many PSO creations each
     bool startupBoost = true;     // raise the compiling thread's priority during the startup phase
     int startupCpuBusy = 80;      // game CPU % (of all CPUs) above which a second counts as busy; 0 = ignore CPU
     int startupFloodSeconds = 10; // busy seconds after the first frame needed before the phase may end
-    int startupFloodWait = 120;   // ...unless no precompile starts within this many seconds of the first frame
+    int startupFloodWait = 45;    // ...unless no precompile starts within this many seconds of the first frame
     bool startupHotkey = true;    // Ctrl+Shift+End ends the startup phase by hand
-    int startupMinSeconds = 150;  // the startup phase can't end automatically before this many seconds after launch
+    int startupMinSeconds = 40;   // the startup phase can't end automatically before this many seconds after launch
+    bool startupWarmLaunch = true;  // a launch whose startup pipelines are nearly all driver-cache hits ends the phase early
+    double startupSlowMs = 5;     // a create taking at least this long is a real compile (not a cache hit)
     int startupMaxSeconds = 0;    // optional hard limit on the startup phase; 0 = none
     int startupFpsCap = 30;       // frame-rate cap during the startup phase only (0 = off)
     bool measureWhenDisabled = true;  // Enabled=0 still hooks (pass-through) to measure, for OFF run logs
@@ -138,6 +140,9 @@ double StartupCpuPercent();
 bool StartupBusyNow();
 void StartupFirstFrame();  // the game presented its first frame  // the last busy second (pipeline calls or CPU) was within 2 s  // last sampled game CPU %, -1 before the first sample  // seconds after DLL load the precompile went quiet; -1 while running
 uint64_t StartupPsos();
+uint64_t StartupSlowCompiles();  // creates of at least StartupSlowCompileMs during the phase
+bool StartupWarm();             // the phase was ended by the warm-launch rule
+void StartupNoteSlow();
 void StartupResetForTest();
 void StartupNote();   // pipeline activity happened (create or library load)
 // Times a create/load call on the game's thread (adds to g_stats.callUs).

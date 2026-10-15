@@ -41,3 +41,4 @@ EXPORTS
     D3D12Async_TestLoading
     D3D12Async_TestFlood
     D3D12Async_TestFirstFrame
+    D3D12Async_TestWarm

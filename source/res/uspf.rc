@@ -14,8 +14,8 @@ D3D12ASYNC_INI  RCDATA "../payload/d3d12async.ini"
 WEBVIEW2_LOADER RCDATA "../third_party/webview2/WebView2Loader.dll"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 0,3,0,0
-PRODUCTVERSION 0,3,0,0
+FILEVERSION 0,3,1,0
+PRODUCTVERSION 0,3,1,0
 FILEOS VOS_NT_WINDOWS32
 FILETYPE VFT_APP
 BEGIN
@@ -25,12 +25,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Meower"
       VALUE "FileDescription", "USPF - Unreal shader proxy fix"
-      VALUE "FileVersion", "0.3.0"
+      VALUE "FileVersion", "0.3.1"
       VALUE "InternalName", "USPF"
       VALUE "LegalCopyright", "(c) 2026 Meower. MIT License."
       VALUE "OriginalFilename", "USPF.exe"
       VALUE "ProductName", "USPF"
-      VALUE "ProductVersion", "0.3.0"
+      VALUE "ProductVersion", "0.3.1"
     END
   END
   BLOCK "VarFileInfo"

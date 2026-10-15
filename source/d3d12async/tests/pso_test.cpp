@@ -343,8 +343,8 @@ int main() {
         double ui = -1;
         if (def) def(&qf, &eff, &comp, &minS, &ui, &panel, &focus);
         CHECK(qf == 1 && eff == 1 && comp == 2, "QueueFullMode=placeholder, WorkerEfficiencyMode=1, ComputePipelineMode=skip (%d %d %d)", qf, eff, comp);
-        CHECK(minS == 150 && ui == 2 && panel == 0 && focus == 0,
-              "StartupMinSeconds=150, UiWaitMaxMs=2, SettingsPanel=0, OverlayOnlyWhenFocused=0 (%d %.0f %d %d)", minS, ui, panel, focus);
+        CHECK(minS == 40 && ui == 2 && panel == 0 && focus == 0,
+              "StartupMinSeconds=40, UiWaitMaxMs=2, SettingsPanel=0, OverlayOnlyWhenFocused=0 (%d %.0f %d %d)", minS, ui, panel, focus);
         // The checks below were written against the older baseline; set it explicitly.
         using PFN_Qm = int(WINAPI*)(int, double, int);
         using PFN_D = void(WINAPI*)(double);
@@ -1278,6 +1278,34 @@ int main() {
             bool held = active() == 1;
             for (int i = 0; i < 16 && active(); ++i) { Sleep(250); tick(); }
             CHECK(held && active() == 0, "quiet for 3 s: still in the startup phase under StartupMinSeconds=4; ended after it");
+            // Warm launch: the startup pipelines are driver-cache hits, so StartupMinSeconds doesn't hold the phase.
+            typedef int(WINAPI * PFN_Warm)(int, double);
+            typedef void(WINAPI * PFN_V)();
+            auto warm = (PFN_Warm)(void*)GetProcAddress(m, "D3D12Async_TestWarm");
+            auto firstFrame = (PFN_V)(void*)GetProcAddress(m, "D3D12Async_TestFirstFrame");
+            CHECK(warm != nullptr, "D3D12Async_TestWarm exported");
+            if (warm) {
+                auto launch = [&](double slowMs) {
+                    phase(1, 0, 6, 1, 0);  // 6 PSOs, 1 quiet second
+                    minSecs(100);          // the cold-launch floor: far longer than this test
+                    warm(1, slowMs);
+                    firstFrame();
+                    for (int i = 0; i < 8; ++i) {
+                        OwnedGfx o = MakeGfx(0.11f * i, 0.7f, 0.2f);
+                        o.d.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT;
+                        ID3D12PipelineState* p = nullptr;
+                        g.dev->CreateGraphicsPipelineState(&o.d, IID_PPV_ARGS(&p));
+                        if (p) p->Release();
+                        tick();
+                    }
+                    for (int i = 0; i < 14 && active(); ++i) { Sleep(250); tick(); }
+                };
+                launch(1e6);  // nothing counts as a real compile: all cache hits
+                CHECK(active() == 0 && warm(-1, 0) == 1, "warm launch (all creates cache hits): the phase ends without waiting for StartupMinSeconds");
+                launch(0);    // every create counts as a real compile
+                CHECK(active() == 1 && warm(-1, 0) == 0, "cold launch (real compiles): StartupMinSeconds still holds the phase");
+                warm(0, 5);
+            }
             phase(0, 0, 0, 1, 0);
             Configure(0, 1, 0, 100000);
         }

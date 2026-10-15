@@ -67,7 +67,7 @@ void LoadConfig(const std::wstring& dir) {
     g_cfg.overlayOpacity = _wtoi(ReadIni(ini, L"OverlayOpacity", L"200").c_str());
     if (g_cfg.overlayOpacity < 30) g_cfg.overlayOpacity = 30;
     if (g_cfg.overlayOpacity > 255) g_cfg.overlayOpacity = 255;
-    g_cfg.startupSync = _wtoi(ReadIni(ini, L"StartupCompileNormally", L"0").c_str()) != 0;
+    g_cfg.startupSync = _wtoi(ReadIni(ini, L"StartupCompileNormally", L"1").c_str()) != 0;
     g_cfg.startupMinPsos = _wtoi(ReadIni(ini, L"StartupMinPsos", L"64").c_str());
     g_cfg.startupQuietSeconds = _wtoi(ReadIni(ini, L"StartupQuietSeconds", L"10").c_str());
     if (g_cfg.startupQuietSeconds < 1) g_cfg.startupQuietSeconds = 1;
@@ -76,9 +76,12 @@ void LoadConfig(const std::wstring& dir) {
     g_cfg.startupBoost = _wtoi(ReadIni(ini, L"StartupBoostCompileThreads", L"1").c_str()) != 0;
     g_cfg.startupCpuBusy = _wtoi(ReadIni(ini, L"StartupCpuBusyPercent", L"80").c_str());
     g_cfg.startupFloodSeconds = _wtoi(ReadIni(ini, L"StartupFloodSeconds", L"10").c_str());
-    g_cfg.startupFloodWait = _wtoi(ReadIni(ini, L"StartupFloodWaitSeconds", L"120").c_str());
-    g_cfg.startupMinSeconds = _wtoi(ReadIni(ini, L"StartupMinSeconds", L"150").c_str());
+    g_cfg.startupFloodWait = _wtoi(ReadIni(ini, L"StartupFloodWaitSeconds", L"45").c_str());
+    g_cfg.startupMinSeconds = _wtoi(ReadIni(ini, L"StartupMinSeconds", L"40").c_str());
     if (g_cfg.startupMinSeconds < 0) g_cfg.startupMinSeconds = 0;
+    g_cfg.startupWarmLaunch = _wtoi(ReadIni(ini, L"StartupWarmLaunch", L"1").c_str()) != 0;
+    g_cfg.startupSlowMs = _wtof(ReadIni(ini, L"StartupSlowCompileMs", L"5").c_str());
+    if (g_cfg.startupSlowMs < 0) g_cfg.startupSlowMs = 0;
     g_cfg.startupHotkey = _wtoi(ReadIni(ini, L"StartupHotkey", L"1").c_str()) != 0;
     g_cfg.startupMaxSeconds = _wtoi(ReadIni(ini, L"StartupMaxSeconds", L"0").c_str());
     g_cfg.startupFpsCap = _wtoi(ReadIni(ini, L"StartupFpsCap", L"30").c_str());

@@ -1,5 +1,14 @@
 # USPF — Unreal shader proxy fix
 
+**GitHub:** https://github.com/RedMatterGG/USPF-Unreal-shader-proxy-fix
+
+Important notes: 
+Some functionalities explained here for the app and not fully implemented but the proxy dll is fully complete and functional.
+
+The startup precompile step (`StartupCompileNormally`) is back on by default since 0.3.1. While the game compiles its shaders at launch, the DLL lets it compile normally, so main menu items are no longer missing on a first launch. On a second launch, when the GPU driver already has the game's shaders cached, the DLL now notices that the startup pipelines are cache hits and switches to background compiling right away (`StartupWarmLaunch`), instead of waiting several minutes as before. On a first launch it waits at least 40 seconds (`StartupMinSeconds`, was 150). If a game still misbehaves, turn `StartupCompileNormally` off in Settings and save; restarting the game also fixes a broken menu. Games installed with an older version keep their old `d3d12async.ini`: click **Reset to defaults** in Settings to get the new values.
+
+Its very likely this also works in other game engines or at least some parts of it but i have not tested it.
+
 USPF removes shader-compilation stutter in DirectX 12 Unreal Engine games.
 
 When a DX12 Unreal game meets a material it hasn't compiled yet, it compiles the pipeline
@@ -114,7 +123,7 @@ Needs Windows 10 or 11 with the Microsoft Edge WebView2 Runtime (Windows 11 alre
 - **Settings**: the game's `d3d12async.ini`. Basic shows the options that matter most;
   Advanced shows every key. Hover `?` for each option's explanation. Reset to defaults writes
   the bundled defaults.
-- **About**: version and update check.
+- **About**: version, update check and a link to the GitHub page.
 
 ### Finding games
 

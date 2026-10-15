@@ -113,13 +113,22 @@ setting in `d3d12async.ini` controls each one. For installing, see `README.md`.
   `StartupFloodSeconds` (10) busy seconds after the game's first frame. Borderlands 4 plays
   about 20 quiet seconds of intro between engine start-up and its compile screen, which used
   to end the phase before the compile screen began. If no precompile starts within
-  `StartupFloodWaitSeconds` (120) of the first frame (caches already warm), the normal quiet
+  `StartupFloodWaitSeconds` (45) of the first frame (caches already warm), the normal quiet
   rule applies anyway.
-- **Minimum time:** for `StartupMinSeconds` (150) after launch nothing but the hotkey ends the
+- **Minimum time:** for `StartupMinSeconds` (40) after launch nothing but the hotkey ends the
   phase; after that, normal detection carries on. In Borderlands 4 the intro made 2,664
   pipelines, then the game went quiet for 17 s before its compile screen, which once ended the
   phase too early: the 50k-pipeline precompile then got placeholders and the compile screen was
   skipped.
+- **Warm launch:** the second launch of a game is mostly driver-cache hits (well under 1 ms per
+  pipeline) instead of real compiles. Once at least `StartupMinPsos` pipelines were created after
+  the first frame, at most 2% of them (minimum 5) took `StartupSlowCompileMs` (5 ms) or longer, and
+  no slow one came for `StartupQuietSeconds`, the phase ends right away, without waiting for
+  `StartupMinSeconds`, a precompile or the CPU. The log and run summary say "warm launch". A cold
+  launch is never mistaken for one: its startup pipelines are real compiles. If the driver evicted
+  part of the cache (it has a size limit) but not the intro's pipelines, the rest of the precompile
+  compiles in the background instead; Ctrl+Shift+End can't bring the phase back, so use
+  `StartupWarmLaunch=0` for such a game.
 - The experimental options (`QueueFullMode`, `WorkerEfficiencyMode`, `MaxCompilesPerSecond`)
   never apply during the startup phase.
 - **By hand:** Ctrl+Shift+End ends the phase immediately (`StartupHotkey=1`), for a game that
@@ -338,18 +347,20 @@ changed) and is written to `d3d12async.log`. `SettingsPanel=0` (the default sinc
 | `WorkerEfficiencyMode` | 1 | 1 = compile threads in Windows 11 efficiency mode (EcoQoS) with low memory priority |
 | `MaxCompilesPerSecond` | 0 | **Experimental.** Start at most this many background compiles per second; urgent ones (a draw is waiting) are exempt. 0 = no limit |
 | `ComputePipelineMode` | skip | Compute pipelines: `skip` = background, dispatches skipped until ready; `sync` = compile on the calling thread; `wait` = background, a dispatch waits |
-| `StartupCompileNormally` | 0 | Compile normally during the startup precompile (off by default since 0.3) |
+| `StartupCompileNormally` | 1 | Compile normally during the startup precompile |
 | `StartupMinPsos` | 64 | Pipeline creates/loads needed before the phase can end |
 | `StartupQuietSeconds` | 10 | Quiet seconds in a row that end the phase (1–60) |
 | `StartupQuietRate` | 10 | Max pipeline creates/loads per second that still count as quiet |
 | `StartupCpuBusyPercent` | 80 | Game CPU % (of all CPUs) above which a second counts as busy; 0 = ignore CPU |
 | `StartupFloodSeconds` | 10 | Busy seconds after the first frame needed before the phase may end; 0 = don't wait for a precompile |
-| `StartupFloodWaitSeconds` | 120 | If no precompile starts within this long after the first frame, the normal quiet rule applies |
+| `StartupFloodWaitSeconds` | 45 | If no precompile starts within this long after the first frame, the normal quiet rule applies |
 | `StartupHotkey` | 1 | Ctrl+Shift+End ends the startup phase by hand |
 | `LoadingCompileNormally` | 0 | Experimental, off by default: compile normally while no frame is presented (loading screens) |
 | `LoadingGapMs` | 500 | No frame for this long = loading screen |
 | `LoadingHoldMs` | 1500 | Keep compiling normally this long after frames resume (after a gap of 2x `LoadingGapMs`) |
-| `StartupMinSeconds` | 150 | For this long after launch only the hotkey can end the startup phase; 0 = off |
+| `StartupMinSeconds` | 40 | For this long after launch only the hotkey can end the startup phase; 0 = off |
+| `StartupWarmLaunch` | 1 | End the phase early when the startup pipelines are driver-cache hits (the game ran before) |
+| `StartupSlowCompileMs` | 5 | A create this slow counts as a real compile (cache hits take well under 1 ms) |
 | `StartupMaxSeconds` | 0 | Hard limit on the startup phase; 0 = none |
 | `StartupBoostCompileThreads` | 1 | Highest priority for the compiling game thread during startup |
 | `StartupFpsCap` | 30 | Frame cap during the startup phase only; 0 = off |

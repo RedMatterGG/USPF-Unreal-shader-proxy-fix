@@ -16,7 +16,7 @@ It doesn't make compilation faster. It moves it off the critical path.
 6. A placeholder the game actually tries to draw with jumps to the front of the compile queue.
 
 **Never deferred:**
-- Optionally, anything created during the game's **startup precompile** (`StartupCompileNormally=1`, off by default since 0.3). The layer then compiles normally from launch and watches the stream of PSO creations; once it has seen at least `StartupMinPsos` and then `StartupQuietSeconds` seconds in a row with at most `StartupQuietRate` new PSOs each, the precompile is over and background compiling switches on, without a restart. During that phase the compiling threads get the highest priority and the frame rate is capped (`StartupFpsCap`).
+- Anything created during the game's **startup precompile** (`StartupCompileNormally=1`). On a warm launch (driver cache already full) the phase ends as soon as the startup pipelines turn out to be cache hits. The layer then compiles normally from launch and watches the stream of PSO creations; once it has seen at least `StartupMinPsos` and then `StartupQuietSeconds` seconds in a row with at most `StartupQuietRate` new PSOs each, the precompile is over and background compiling switches on, without a restart. During that phase the compiling threads get the highest priority and the frame rate is capped (`StartupFpsCap`).
 - **UI-type pipelines are never skipped**: only 8-bit colour targets (`R8G8B8A8`, `B8G8R8A8`, `R10G10B10A2`, …) and no depth target. Menus, text and widgets are often drawn once into a cached texture and reused, so a skipped draw there would stay empty (the empty Borderlands 4 settings menu). They compile in the background, and a draw that needs one waits for it (`UiPipelineMode=wait`).
 - **Compute PSOs** (`ComputePipelineMode`): by default (`skip`) they compile in the background and dispatches that use one are skipped until it's ready. Skipped compute work (culling, Nanite, Lumen) can cause brief glitches; in Borderlands 4 none were seen. `sync` compiles them on the calling thread as without the DLL; `wait` compiles them in the background and makes a dispatch wait.
 - Bundles.
@@ -108,12 +108,13 @@ The UE settings and the layer complement each other. UE handles the PSOs it prec
 | `BudgetMs` | 1 | How long a create may block before a placeholder is handed out. Skipped when compiles are already queued (the new one couldn't start in time anyway), so a burst of hundreds of creates in one frame doesn't stall |
 | `AsyncThreads` | all | `all` is needed for UE5, which creates runtime PSOs on task threads. `recording` limits placeholders to threads that record command lists |
 | `MaxQueuedCompiles` | 256 | Backpressure: past this many queued compiles, non-recording (precache) threads block as usual |
-| `StartupCompileNormally` | 0 | Compile normally during the game's startup precompile; switch to background compiling when it ends |
+| `StartupCompileNormally` | 1 | Compile normally during the game's startup precompile; switch to background compiling when it ends |
 | `StartupMinPsos` / `StartupQuietSeconds` / `StartupQuietRate` | 64 / 10 / 10 | The precompile counts as over after this many PSOs, followed by this many seconds with at most this many new PSOs each |
 | `StartupCpuBusyPercent` | 80 | A second with game CPU use above this also counts as busy; 0 = ignore CPU |
 | `LoadingCompileNormally` / `LoadingGapMs` / `LoadingHoldMs` | 0 / 500 / 1500 | Experimental, off: while no frame is presented for 500 ms (a loading screen), pipelines compile normally, and for 1.5 s after frames resume |
-| `StartupMinSeconds` | 150 | For this long after launch only the hotkey can end the startup phase |
-| `StartupFloodSeconds` / `StartupFloodWaitSeconds` | 10 / 120 | The phase can't end before the precompile has been seen (busy seconds after the first frame), unless none starts within the wait (warm caches) |
+| `StartupMinSeconds` | 40 | For this long after launch only the hotkey can end the startup phase |
+| `StartupWarmLaunch` / `StartupSlowCompileMs` | 1 / 5 | Warm launch: when the startup pipelines are driver-cache hits (under `StartupSlowCompileMs` each), the phase ends right away |
+| `StartupFloodSeconds` / `StartupFloodWaitSeconds` | 10 / 45 | The phase can't end before the precompile has been seen (busy seconds after the first frame), unless none starts within the wait (warm caches) |
 | `StartupHotkey` | 1 | Ctrl+Shift+End ends the startup phase by hand |
 | `StartupMaxSeconds` | 0 | Optional hard limit on the startup phase |
 | `StartupBoostCompileThreads` | 1 | During the startup phase, the game thread doing a compile runs at highest priority for that compile |
@@ -170,7 +171,7 @@ For an OFF run set `Enabled=0`: the layer changes nothing and only measures. `Ru
 - vtables copied by other layers, and driver-style private vtables whose entries bypass the runtime;
 - the startup phase ending on its own once creations go quiet, and UI-type pipelines staying synchronous;
 - the Present hook: the startup frame cap holding and lifting, and run logs with labelling and pruning;
-- the startup phase holding for `StartupMinSeconds`;
+- the startup phase holding for `StartupMinSeconds` on a cold launch, and ending early on a warm one;
 - `UiWaitMaxMs` cutting a UI wait short;
 - `QueueFullMode=placeholder` capped by `MaxPlaceholders`, and the settings panel's Ctrl+Shift+P toggle;
 - loading screens: pipelines created while no frame is presented compiling normally, the hold after frames resume, and loading frames kept out of the gameplay stats;

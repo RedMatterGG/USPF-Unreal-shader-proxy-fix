@@ -5,6 +5,7 @@
 // than StartupQuietRate creations each.
 #include "common.h"
 
+#include <algorithm>
 #include <mutex>
 
 namespace d3a {
@@ -37,6 +38,12 @@ std::atomic<int64_t> g_firstFrameMs{0};
 std::atomic<int64_t> g_lastCountedSec{-1};
 std::atomic<int> g_floodSecs{0};
 std::atomic<bool> g_manualEnd{false};
+// Warm launch: the game has run before and the driver's cache already holds its pipelines, so its
+// startup creates are cache hits (well under a millisecond) instead of real compiles. Nothing slow
+// is left to protect, so StartupMinSeconds and StartupFloodWaitSeconds don't apply.
+std::atomic<uint64_t> g_slow{0};
+std::atomic<int64_t> g_lastSlowMs{0};
+std::atomic<bool> g_warm{false};
 
 void MarkBusy(int64_t atMs) {
     int64_t cur = g_lastBusyMs.load(std::memory_order_relaxed);
@@ -82,6 +89,14 @@ bool StartupBusyNow() { return NowMs() - g_lastBusyMs.load(std::memory_order_rel
 double StartupCpuPercent() { std::lock_guard<std::mutex> lk(g_cpuMu); return g_cpuLast; }
 double StartupEndedAt() { return g_endedMs.load() < 0 ? -1.0 : (g_endedMs.load() - g_startMs) / 1000.0; }
 uint64_t StartupPsos() { return g_total.load(); }
+uint64_t StartupSlowCompiles() { return g_slow.load(); }
+bool StartupWarm() { return g_warm.load(); }
+void StartupNoteSlow() {
+    if (!StartupPhase()) return;
+    g_slow++;
+    int64_t now = NowMs(), cur = g_lastSlowMs.load(std::memory_order_relaxed);
+    while (cur < now && !g_lastSlowMs.compare_exchange_weak(cur, now)) {}
+}
 
 // The phase is one-way: it starts at launch and, once over, nothing turns it back on for the rest
 // of the session (no CPU spike, loading screen or pipeline burst). Only the test suite resets it.
@@ -94,6 +109,9 @@ void StartupResetForTest() {
     g_lastCountedSec = -1;
     g_floodSecs = 0;
     g_manualEnd = false;
+    g_slow = 0;
+    g_lastSlowMs = 0;
+    g_warm = false;
     g_phaseStartMs = NowMs();
     { std::lock_guard<std::mutex> lk(g_cpuMu); g_cpuSampleMs = 0; g_cpuLast = -1; }
     g_active = true;
@@ -111,6 +129,7 @@ CallTimer::~CallTimer() {
     uint64_t us = (uint64_t)((t.QuadPart - t0) * 1000000 / g_freq.QuadPart);
     g_stats.callUs.fetch_add(us, std::memory_order_relaxed);
     TrackCall(us, CurrentCallCause(), OnRecordingThread());
+    if (StartupPhase() && us >= (uint64_t)(g_cfg.startupSlowMs * 1000.0)) StartupNoteSlow();
 }
 
 void StartupFirstFrame() {
@@ -138,6 +157,25 @@ void StartupTick() {
         (GetAsyncKeyState(VK_END) & 0x8000))
         g_manualEnd = true;
     bool manual = g_manualEnd.load();
+    // Warm launch: after the first frame, at least StartupMinPsos pipelines seen, almost none of them
+    // real compiles (at most 2%, minimum 5), and none for StartupQuietSeconds. The phase then ends
+    // without waiting for StartupMinSeconds, a precompile flood or the CPU to settle.
+    int64_t ff0 = g_firstFrameMs.load();
+    uint64_t total = g_total.load(), slow = g_slow.load();
+    int64_t quietMs = (int64_t)g_cfg.startupQuietSeconds * 1000;
+    if (!manual && g_cfg.startupWarmLaunch && ff0 && now - ff0 >= quietMs && total >= (uint64_t)std::max(g_cfg.startupMinPsos, 1) &&
+        slow <= std::max<uint64_t>(5, total / 50) && now - std::max(g_lastSlowMs.load(), ff0) >= quietMs) {
+        bool expected = true;
+        if (g_active.compare_exchange_strong(expected, false)) {
+            g_warm = true;
+            g_endedMs = now;
+            Log(LogLevel::Info, "startup phase ended at %.1f s: warm launch (%llu pipeline creates/loads, only %llu real compiles >= %g ms; "
+                "the driver cache already has this game's pipelines)%s",
+                (now - g_startMs) / 1000.0, (unsigned long long)total, (unsigned long long)slow, g_cfg.startupSlowMs,
+                g_cfg.enabled ? ": background compiling is now on" : "");
+        }
+        return;
+    }
     // StartupMinSeconds: for this long after launch nothing but the hotkey ends the phase
     // (Borderlands 4 can go quiet for 17 s between its intro and the compile screen).
     if (!manual && g_cfg.startupMinSeconds > 0 && now - g_phaseStartMs.load() < (int64_t)g_cfg.startupMinSeconds * 1000) return;

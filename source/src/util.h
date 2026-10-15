@@ -22,10 +22,9 @@ namespace uspf {
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-constexpr const char* kAppVersion = "0.3.0";
-// Placeholder until the repository exists; the About tab shows it as "coming soon".
-constexpr const char* kGithubOwner = "Meower";
-constexpr const char* kGithubRepo = "USPF";
+constexpr const char* kAppVersion = "0.3.1";
+constexpr const char* kGithubOwner = "RedMatterGG";
+constexpr const char* kGithubRepo = "USPF-Unreal-shader-proxy-fix";
 
 std::string Utf8(const std::wstring& w);
 std::wstring Wide(const std::string& s);
